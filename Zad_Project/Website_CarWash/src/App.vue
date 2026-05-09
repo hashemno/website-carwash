@@ -135,7 +135,7 @@ onMounted(() => {
       <a href="#contact" class="btn btn-primary nav-cta">Termin buchen</a>
     </header>
 
-    <!-- FULLSCREEN HERO SECTION (ohne Video) -->
+    <!-- FULLSCREEN HERO SECTION (ORIGINAL - OHNE VIDEO) -->
     <section class="hero-fullscreen">
       <!-- Pointer-events: none sorgt dafür, dass man durch den Text hindurch das Video klicken kann, falls nötig -->
       <div class="hero-content reveal" style="pointer-events: none;">
@@ -352,15 +352,15 @@ li { list-style: none; }
 .text-accent { color: var(--neon-accent); }
 .app-shell { position: relative; overflow-x: hidden; }
 
-/* HEADER */
+/* HEADER MIT VIDEO-HINTERGRUND */
 .topbar {
   position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
   padding: 1.5rem 5%; z-index: 100; transition: all 0.4s ease; border-bottom: 1px solid transparent;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(15, 23, 42, 0.6);
 }
 .topbar.compact { padding: 1rem 5%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
 
-/* Header Video Background */
+/* Header Video-Hintergrund */
 .header-video {
   position: absolute;
   top: 0;
@@ -368,7 +368,7 @@ li { list-style: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.3;
+  opacity: 0.25;
   z-index: -1;
 }
 
@@ -378,10 +378,10 @@ li { list-style: none; }
 .nav a { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); transition: color 0.3s; }
 .nav a:hover { color: var(--neon-accent); }
 
-/* FULLSCREEN HERO - Ohne Video */
+/* FULLSCREEN HERO VIDEO - ORIGINAL DESIGN BEIBEHALTEN */
 .hero-fullscreen {
   position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 5%;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
 }
 
 .hero-content { position: relative; z-index: 2; max-width: 800px; }
