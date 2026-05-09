@@ -7,7 +7,7 @@ const showCookieBanner = ref(true)
 
 // --- VIDEO SETUP ---
 // Pfad zum lokalen Video im public-Ordner
-const videoUrl = '/carwash.mp4'
+const videoUrl = '/carwash'
 
 // Referenz für den HTML Video-Player
 const videoPlayer = ref(null)
