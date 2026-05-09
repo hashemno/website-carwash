@@ -54,7 +54,6 @@ const animateCounters = () => {
 onMounted(() => {
   
   // --- VIDEO AUTOPLAY FIX ---
-  // Erzwingt den Start des Videos, falls der Browser es blockiert
   if (videoPlayer.value) {
     videoPlayer.value.play().catch(error => {
       console.log("Autoplay blockiert. Versuche es stummgeschaltet:", error)
@@ -94,7 +93,7 @@ onMounted(() => {
   const statsObserver = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) {
       animateCounters()
-      statsObserver.disconnect() // Nach dem ersten Mal stoppen
+      statsObserver.disconnect()
     }
   }, { threshold: 0.5 })
 
@@ -129,6 +128,7 @@ onMounted(() => {
     <section class="hero-fullscreen">
       <div class="video-background">
         <div class="video-overlay"></div>
+        <!-- NEU: "controls" Attribut hinzugefügt für sichtbaren Player -->
         <video 
           ref="videoPlayer"
           :src="videoUrl"
@@ -136,11 +136,13 @@ onMounted(() => {
           loop 
           muted 
           playsinline 
+          controls
           class="bg-video">
         </video>
       </div>
 
-      <div class="hero-content reveal">
+      <!-- Pointer-events: none sorgt dafür, dass man durch den Text hindurch das Video klicken kann, falls nötig -->
+      <div class="hero-content reveal" style="pointer-events: none;">
         <span class="eyebrow">Premium Car Detailing</span>
         <h2>
           Perfektion in jedem <span class="text-accent">Detail.</span>
@@ -150,7 +152,8 @@ onMounted(() => {
           Die Nummer 1 Adresse für Fahrzeugaufbereitung in Halle (Saale).
         </p>
         
-        <div class="hero-actions">
+        <!-- Buttons wieder anklickbar machen -->
+        <div class="hero-actions" style="pointer-events: auto;">
           <a href="#pricing" class="btn btn-primary">Preise & Pakete</a>
           <a href="#experience" class="btn btn-ghost">Unsere Arbeit</a>
         </div>
@@ -371,7 +374,16 @@ li { list-style: none; }
 }
 .video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
 .bg-video { width: 100%; height: 100%; object-fit: cover; }
-.video-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), var(--bg-dark)); z-index: 1; }
+
+/* NEU: pointer-events: none sorgt dafür, dass das dunkle Overlay keine Klicks auf den Video-Player blockiert */
+.video-overlay { 
+  position: absolute; 
+  inset: 0; 
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), var(--bg-dark)); 
+  z-index: 1; 
+  pointer-events: none; 
+}
+
 .hero-content { position: relative; z-index: 2; max-width: 800px; }
 .eyebrow { color: var(--neon-accent); text-transform: uppercase; letter-spacing: 4px; font-size: 0.9rem; font-weight: 800; display: block; margin-bottom: 1rem; }
 h2 { font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 900; letter-spacing: -1px; color: #fff; }
