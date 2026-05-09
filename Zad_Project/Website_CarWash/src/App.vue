@@ -4,6 +4,7 @@ import { ref, onMounted } from 'vue'
 const isScrolled = ref(false)
 const parallaxBox = ref(null)
 const showCookieBanner = ref(true)
+const videoLoaded = ref(false)
 
 // --- VIDEO SETUP ---
 // Pfad zum lokalen Video im public-Ordner
@@ -55,11 +56,58 @@ onMounted(() => {
   
   // --- VIDEO AUTOPLAY FIX ---
   if (videoPlayer.value) {
-    videoPlayer.value.play().catch(error => {
-      console.log("Autoplay blockiert. Versuche es stummgeschaltet:", error)
-      videoPlayer.value.muted = true
-      videoPlayer.value.play()
+    // Stelle sicher dass Video muted und vollständig konfiguriert ist
+    videoPlayer.value.muted = true
+    videoPlayer.value.volume = 0
+    videoPlayer.value.playsInline = true
+    videoPlayer.value.preload = 'auto'
+    
+    // Event-Listener für erfolgreiche Wiedergabe
+    videoPlayer.value.addEventListener('play', () => {
+      videoLoaded.value = true
+      console.log('✓ Video spielt erfolgreich ab')
     })
+
+    // Event-Listener für Fehler
+    videoPlayer.value.addEventListener('error', (e) => {
+      console.error('✗ Video-Fehler:', e)
+      videoLoaded.value = false
+      // Video ausblenden bei Fehler
+      videoPlayer.value.style.display = 'none'
+    })
+
+    // Event-Listener für geladenem Metadaten
+    videoPlayer.value.addEventListener('loadedmetadata', () => {
+      console.log('Video Metadaten geladen')
+      // Versuche zu spielen wenn Metadaten verfügbar sind
+      const playPromise = videoPlayer.value.play()
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log('✓ Video-Autoplay erfolgreich')
+            videoLoaded.value = true
+          })
+          .catch((error) => {
+            console.warn('Autoplay blockiert, versuche stummgeschaltet:', error)
+            videoPlayer.value.muted = true
+            videoPlayer.value.volume = 0
+            videoPlayer.value.play().catch(err => {
+              console.error('Video konnte nicht abgespielt werden:', err)
+              videoLoaded.value = false
+            })
+          })
+      }
+    })
+
+    // Fallback: Versuche zu spielen nach kurzer Verzögerung
+    setTimeout(() => {
+      if (videoPlayer.value && !videoLoaded.value) {
+        videoPlayer.value.muted = true
+        videoPlayer.value.play().catch(err => {
+          console.error('Video-Fallback fehlgeschlagen:', err)
+        })
+      }
+    }, 500)
   }
   // --------------------------
 
@@ -115,8 +163,13 @@ onMounted(() => {
         loop 
         muted 
         playsinline
-        class="header-video">
+        preload="auto"
+        class="header-video"
+        @error="() => videoLoaded = false">
       </video>
+      
+      <!-- Fallback Gradient wenn Video nicht lädt -->
+      <div v-if="!videoLoaded" class="header-fallback"></div>
       
       <div class="brand">
         <div>
@@ -368,7 +421,20 @@ li { list-style: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   opacity: 0.25;
+  z-index: -1;
+  background-color: #000;
+}
+
+/* Fallback Gradient wenn Video nicht funktioniert */
+.header-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(2, 132, 199, 0.1));
   z-index: -1;
 }
 
@@ -378,7 +444,7 @@ li { list-style: none; }
 .nav a { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); transition: color 0.3s; }
 .nav a:hover { color: var(--neon-accent); }
 
-/* FULLSCREEN HERO VIDEO - ORIGINAL DESIGN BEIBEHALTEN */
+/* FULLSCREEN HERO SECTION (ORIGINAL - OHNE VIDEO) */
 .hero-fullscreen {
   position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 5%;
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
@@ -430,7 +496,7 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 .price-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.3); background: var(--bg-card-hover); }
 .price-card.featured { border-color: var(--neon-accent); background: rgba(14, 165, 233, 0.05); }
 .price { font-size: 3.5rem; font-weight: 900; color: var(--text-main); margin: 1rem 0; letter-spacing: -2px; }
-.chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--neon-accent); color: #fff; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 20px; }
+.chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--neon-accent); color: #fff; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 8px; }
 .feature-list-small { margin-top: 2rem; }
 .feature-list-small li { font-size: 0.95rem; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem; color: var(--text-muted); }
 
@@ -489,7 +555,7 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 }
 
 /* CONTACT BANNER */
-.contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+.contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
 .contact-banner h3 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2.5rem; }
 .contact-banner p { color: rgba(255,255,255,0.9); margin: 0; }
 .contact-banner .btn-primary { background: #fff; color: #0f172a; box-shadow: none; }
