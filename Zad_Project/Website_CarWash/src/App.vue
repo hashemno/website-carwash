@@ -2,37 +2,29 @@
 import { ref, onMounted } from 'vue'
 
 const isScrolled = ref(false)
-const heroCard = ref(null)
 const parallaxBox = ref(null)
+const showCookieBanner = ref(true)
 
-// 1. 3D Tilt-Effekt für das Hero-Bild
-const handleMove = (e) => {
-  if (!heroCard.value) return
-  const { left, top, width, height } = heroCard.value.getBoundingClientRect()
-  const x = (e.clientX - left) / width - 0.5
-  const y = (e.clientY - top) / height - 0.5
-  
-  heroCard.value.style.transform = `perspective(1000px) rotateY(${x * 15}deg) rotateX(${-y * 15}deg) translateY(-10px)`
-  heroCard.value.style.boxShadow = `${-x * 30}px ${-y * 30}px 50px rgba(0, 243, 255, 0.15)`
+// LÖSUNG: Video-Pfad als Variable definieren. 
+// So fasst Vite die Datei nicht an und der Fehler verschwindet.
+const videoUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4'
+// Cookie Logik
+const acceptCookies = () => {
+  showCookieBanner.value = false
 }
 
-const resetMove = () => {
-  if (!heroCard.value) return
-  heroCard.value.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0px)'
-  heroCard.value.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)'
-}
-
-// 2. Scroll-Reveals & Parallax
+// Scroll-Reveals & Header-Logik
 onMounted(() => {
   window.addEventListener('scroll', () => {
     isScrolled.value = window.scrollY > 50
     
     if (parallaxBox.value) {
-      const scrollRate = window.scrollY * 0.15
+      const scrollRate = window.scrollY * 0.1
       parallaxBox.value.style.transform = `translateY(${scrollRate}px)`
     }
   })
 
+  // Sanfte Einblend-Animationen für alle Elemente
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -40,10 +32,10 @@ onMounted(() => {
         observer.unobserve(entry.target)
       }
     })
-  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' })
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' })
 
   document.querySelectorAll('.reveal').forEach((el, index) => {
-    el.style.transitionDelay = `${(index % 3) * 0.15}s`
+    el.style.transitionDelay = `${(index % 4) * 0.1}s`
     observer.observe(el)
   })
 })
@@ -51,450 +43,350 @@ onMounted(() => {
 
 <template>
   <div class="app-shell">
-    <div class="fx-grid"></div>
-    <div class="fx-noise"></div>
-    <div class="fx-glow fx-glow-a"></div>
-    <div class="fx-glow fx-glow-b"></div>
-
+    <!-- Header -->
     <header class="topbar" :class="{ compact: isScrolled }">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true"><span></span></div>
         <div>
-          <p class="brand-overline">Premium Detailing</p>
+          <p class="brand-overline">Halle (Saale)</p>
           <h1 class="brand-title">Veloura Wash</h1>
         </div>
       </div>
 
       <nav class="nav">
         <a href="#services">Services</a>
-        <a href="#experience">Experience</a>
-        <a href="#process">Process</a>
-        <a href="#pricing">Pricing</a>
+        <a href="#experience">Handwerk</a>
+        <a href="#pricing">Preise</a>
         <a href="#reviews">Reviews</a>
       </nav>
 
-      <a href="#contact" class="btn btn-primary nav-cta">Jetzt buchen</a>
+      <a href="#contact" class="btn btn-primary nav-cta">Termin buchen</a>
     </header>
 
+    <!-- FULLSCREEN VIDEO HERO -->
+    <section class="hero-fullscreen">
+      <div class="video-background">
+        <div class="video-overlay"></div>
+        <video autoplay loop muted playsinline class="bg-video">
+          <!-- LÖSUNG: Hier binden wir die Variable mit Doppelpunkt ein -->
+          <source :src="videoUrl" type="video/mp4">
+        </video>
+      </div>
+
+      <div class="hero-content reveal">
+        <span class="eyebrow">Premium Car Detailing</span>
+        <h2>
+          Perfektion in jedem <span class="text-accent">Detail.</span>
+        </h2>
+        <p class="hero-subtitle">
+          Echtes Handwerk, exklusive Pflege und spiegelnder Glanz. 
+          Die Nummer 1 Adresse für Fahrzeugaufbereitung in Halle (Saale).
+        </p>
+        
+        <div class="hero-actions">
+          <a href="#pricing" class="btn btn-primary">Preise & Pakete</a>
+          <a href="#experience" class="btn btn-ghost">Unsere Arbeit</a>
+        </div>
+      </div>
+    </section>
+
     <main>
-      <section class="hero section">
-        <div class="hero-copy reveal">
-          <span class="eyebrow">3D Motion Automotive Experience</span>
-          <h2>
-            Drive <span class="text-cyan">clean</span>.<br />
-            Launch like a
-            <em class="text-glow">luxury brand</em>.
-          </h2>
-          <p>
-            Eine kreative Premium-Car-Wash Website mit cineastischer Bildsprache,
-            3D-Tilt-Hero, Neon-Licht, Parallax-Gefühl, animierten Preisblöcken,
-            Trust-Elementen und klarer Booking-Conversion.
-          </p>
-
-          <div class="hero-actions">
-            <a href="#pricing" class="btn btn-primary">Pakete entdecken</a>
-            <a href="#experience" class="btn btn-ghost">Experience ansehen</a>
-          </div>
-
-          <div class="hero-stats">
-            <article>
-              <strong>12k+</strong>
-              <span>Detailings pro Jahr</span>
-            </article>
-            <article>
-              <strong>4.9/5</strong>
-              <span>Premium Reviews</span>
-            </article>
-            <article>
-              <strong>90 Min</strong>
-              <span>Signature Finish</span>
-            </article>
-          </div>
-        </div>
-
-        <div
-          class="hero-visual reveal"
-          ref="heroCard"
-          @mousemove="handleMove"
-          @mouseleave="resetMove"
-        >
-          <div class="scan-line"></div>
-          <div class="hero-panel top-panel">
-            <span>Finish Quality</span>
-            <strong>Mirror Gloss+</strong>
-          </div>
-
-          <div class="floating-orb orb-a"></div>
-          <div class="floating-orb orb-b"></div>
-
-          <div class="car-stage">
-            <img
-              src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/ef5b6e5fa944e5ce91947b3b8cc624227228c8e5.jpg"
-              alt="Luxury sports car side view"
-              width="1000"
-              height="554"
-              class="car-img"
-            />
-          </div>
-
-          <div class="hero-panel bottom-panel">
-            <span>Wash Stack</span>
-            <strong>Foam · Polish · Shield</strong>
-          </div>
-        </div>
-      </section>
-
+      <!-- Services -->
       <section id="services" class="section">
         <div class="section-head reveal">
-          <div>
-            <p class="section-kicker">Signature Services</p>
-            <h3>Luxus-Detailing mit Showroom-Effekt</h3>
-          </div>
+          <p class="section-kicker">Signature Services</p>
+          <h3>Detailing auf höchstem Niveau</h3>
           <p class="section-text">
-            Nicht einfach waschen, sondern inszenieren: starke Oberfläche,
-            tiefes Finish, saubere Preisstruktur und ein Auftritt wie eine starke
-            Automotive-Marke statt wie eine Standard-Dienstleisterseite.
+            Keine kratzenden Bürsten, keine Kompromisse. Wir bieten schonende Handwäsche, 
+            Tiefenreinigung und keramische Versiegelungen für Fahrzeuge, die mehr verdienen.
           </p>
         </div>
 
         <div class="service-grid">
-          <article class="glass-card reveal">
-            <div class="icon-badge">✦</div>
+          <article class="clean-card reveal">
+            <div class="icon-badge">01</div>
             <h4>Hyper Foam Wash</h4>
-            <p>Snow-Foam-Vorwäsche, Lackpflege und ein reflektionsstarkes Ergebnis.</p>
+            <p>Schonende Snow-Foam-Vorwäsche und lackschonende 2-Eimer-Handwäsche. Kratzerfrei und tiefenrein.</p>
           </article>
 
-          <article class="glass-card reveal">
-            <div class="icon-badge">◈</div>
+          <article class="clean-card reveal">
+            <div class="icon-badge">02</div>
             <h4>Interior Reset</h4>
-            <p>Tiefenreinigung für Sitze, Cockpit und Oberflächen mit Executive-Finish.</p>
+            <p>Tiefenreinigung für Polster, Leder und Cockpit. Entfernt Bakterien und bringt den Neuwagen-Duft zurück.</p>
           </article>
 
-          <article class="glass-card reveal">
-            <div class="icon-badge">⬡</div>
+          <article class="clean-card reveal">
+            <div class="icon-badge">03</div>
             <h4>Ceramic Shield</h4>
-            <p>Hydrophober Schutz, langanhaltender Glanz und High-End-Exterior-Look.</p>
+            <p>Mehrstufige Maschinenpolitur und Keramikbeschichtung für monatelangen, hydrophoben Abperleffekt.</p>
           </article>
         </div>
       </section>
 
+      <!-- Experience / Handwerk -->
       <section id="experience" class="section showcase">
-        <div class="showcase-media glass-frame reveal parallax-box" ref="parallaxBox">
-          <img
-            src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/de788c4f90a0a2d49cb63b7b7170e964c02a1d8a.jpg"
-            alt="Neon lit sports car showcase"
-            width="1600"
-            height="990"
-            class="full-img"
-          />
-        </div>
-
-        <div class="showcase-copy glass-frame reveal">
-          <span class="chip">Visual Experience</span>
-          <h3>Mehr als eine Seite — eine digitale Brand-Inszenierung</h3>
+        <div class="showcase-text reveal">
+          <span class="section-kicker">Echtes Handwerk</span>
+          <h3>Keine Maschinen,<br>nur Präzision.</h3>
           <p>
-            Lichtführung, Motion und Tiefenwirkung erzeugen genau den Eindruck,
-            den eine Premium-Car-Wash-Marke braucht: modern, hochwertig,
-            selbstbewusst und vertrauenswürdig.
+            Wo Waschanlagen versagen, fangen wir an. In unserem modernen Detailing-Studio 
+            in Halle nutzen wir Premium-Chemie, weiche Mikrofasern und viel Zeit, um den Lack 
+            deines Fahrzeugs in einen spiegelnden Showroom-Zustand zu versetzen.
           </p>
           <ul class="feature-list">
-            <li>3D-Tilt-Hero mit räumlicher Tiefe.</li>
-            <li>Luxury Dark Mode mit Cyan-Glow und starken Highlights.</li>
-            <li>Klare CTAs für Buchung, Preise und Markenwirkung.</li>
+            <li>Defektkorrektur & Kratzerentfernung</li>
+            <li>Lackschonende pH-neutrale Reiniger</li>
+            <li>Sicheres Trocknen per Luftgebläse</li>
           </ul>
         </div>
-      </section>
 
-      <section id="process" class="section">
-        <div class="section-head reveal">
-          <div>
-            <p class="section-kicker">Process</p>
-            <h3>Ein Ablauf, der schnell wirkt und premium aussieht</h3>
-          </div>
-          <p class="section-text">
-            Dein Kunde soll sofort verstehen, wie einfach der Weg vom Klick bis zum
-            perfekten Finish ist.
-          </p>
-        </div>
-
-        <div class="timeline">
-          <article class="timeline-step glass-card reveal">
-            <span class="step-num">01</span>
-            <h4>Booking</h4>
-            <p>Termin online wählen, Paket festlegen und direkt starten.</p>
-          </article>
-          <article class="timeline-step glass-card reveal">
-            <span class="step-num">02</span>
-            <h4>Detailing</h4>
-            <p>Außenreinigung, Innenraum-Finish und abgestimmter Pflegeprozess.</p>
-          </article>
-          <article class="timeline-step glass-card reveal">
-            <span class="step-num">03</span>
-            <h4>Reveal</h4>
-            <p>Übergabe mit spiegelndem Glanz und starkem Premium-Eindruck.</p>
-          </article>
+        <div class="showcase-image reveal" ref="parallaxBox">
+          <img
+            src="https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1200&auto=format&fit=crop"
+            alt="Professionelle Auto Politur"
+            class="img-fluid"
+          />
         </div>
       </section>
 
-      <section id="pricing" class="section">
+      <!-- Pricing -->
+      <section id="pricing" class="section bg-light-mix">
         <div class="section-head reveal">
-          <div>
-            <p class="section-kicker">Pricing</p>
-            <h3>Pakete mit echter Premium-Positionierung</h3>
-          </div>
-          <p class="section-text">
-            Klare Angebotslogik, damit Kunden Standard, Signature und Elite sofort
-            verstehen und dein Angebot hochwertiger wahrnehmen.
-          </p>
+          <p class="section-kicker">Pakete</p>
+          <h3>Klare Preise, maximaler Glanz</h3>
         </div>
 
         <div class="pricing-grid">
           <article class="price-card reveal">
-            <span class="chip">Start</span>
-            <h4>Express Clean</h4>
-            <div class="price">29€</div>
-            <p>Schneller Außen-Refresh mit elegantem Finish.</p>
-            <ul class="feature-list">
-              <li>Foam Wash</li>
-              <li>Felgenreinigung</li>
-              <li>Dry Gloss Finish</li>
+            <h4>Express Hand Wash</h4>
+            <div class="price">49€</div>
+            <p>Die sichere Handwäsche für zwischendurch.</p>
+            <ul class="feature-list-small">
+              <li>Snow Foam Vorwäsche</li>
+              <li>Handwäsche & Felgen</li>
+              <li>Trocknung mit Luft</li>
             </ul>
           </article>
 
           <article class="price-card featured reveal">
-            <span class="chip">Most Wanted</span>
-            <h4>Signature Detail</h4>
-            <div class="price text-cyan">79€</div>
-            <p>Das starke Kernpaket für maximalen Shine und Interior-Effekt.</p>
-            <ul class="feature-list">
-              <li>Exterior + Interior</li>
-              <li>Dashboard & vacuum</li>
-              <li>Glass perfection</li>
+            <div class="chip">Bestseller</div>
+            <h4 class="text-accent">Signature Detail</h4>
+            <div class="price text-accent">129€</div>
+            <p>Unser Kernpaket für Außen- und Innenraum.</p>
+            <ul class="feature-list-small">
+              <li>Außenwäsche + Interior</li>
+              <li>Kunststoff- & Lederpflege</li>
+              <li>Sprühversiegelung (3 Monate)</li>
             </ul>
+            <a href="#contact" class="btn btn-primary full-width">Paket wählen</a>
           </article>
 
           <article class="price-card reveal">
-            <span class="chip">Elite</span>
-            <h4>Ceramic Luxe</h4>
-            <div class="price">149€</div>
-            <p>Showroom-Optik mit Schutzschicht und High-End-Finish.</p>
-            <ul class="feature-list">
-              <li>Ceramic shield</li>
-              <li>Deep polish</li>
-              <li>Luxury finish pass</li>
+            <h4>Paint Correction</h4>
+            <div class="price">ab 349€</div>
+            <p>Lackaufbereitung für Enthusiasten.</p>
+            <ul class="feature-list-small">
+              <li>Maschinenpolitur</li>
+              <li>Hologrammentfernung</li>
+              <li>Keramikbeschichtung</li>
             </ul>
           </article>
         </div>
       </section>
 
-      <section id="reviews" class="section">
-        <div class="section-head reveal">
-          <div>
-            <p class="section-kicker">Client Love</p>
-            <h3>Social Proof mit Premium-Vibe</h3>
-          </div>
-          <p class="section-text">
-            Bewertungen sind nicht nur Vertrauen, sondern Teil deiner Positionierung.
-          </p>
-        </div>
-
-        <div class="review-grid">
-          <article class="review-card reveal">
-            <strong>„Sieht aus wie eine Luxusmarke, nicht wie ein kleiner Waschservice.“</strong>
-            <p>Die Seite wirkt sofort hochwertig und macht direkt Lust zu buchen.</p>
-            <span class="author">— Automotive Client</span>
-          </article>
-          <article class="review-card reveal">
-            <strong>„Extrem modern, starkes Design, perfekter erster Eindruck.“</strong>
-            <p>Vor allem das Hero und die Preisstruktur wirken sehr professionell.</p>
-            <span class="author">— Premium Customer</span>
-          </article>
-          <article class="review-card reveal">
-            <strong>„Genau so soll eine Car-Wash Brand im Jahr 2026 aussehen.“</strong>
-            <p>Technisch clean, visuell stark und deutlich über dem Standard.</p>
-            <span class="author">— Local Business Owner</span>
-          </article>
-        </div>
-      </section>
-
+      <!-- Contact -->
       <section id="contact" class="section">
-        <div class="contact-band glass-card reveal">
-          <div class="contact-text">
-            <p class="section-kicker">Ready to launch</p>
-            <h3>Deine neue Car-Wash Website soll brutal gut aussehen.</h3>
-            <p>
-              Diese Version kombiniert starke Premium-Visuals, moderne Motion,
-              3D-Feeling, Review-Trust und klare Verkaufsstruktur für einen deutlich
-              stärkeren Online-Auftritt.
-            </p>
+        <div class="contact-banner reveal">
+          <div class="contact-content">
+            <h3>Bereit für das perfekte Finish?</h3>
+            <p>Sichere dir jetzt deinen Termin in unserem Studio in Halle.</p>
           </div>
-          <div class="hero-actions">
-            <a href="mailto:booking@velourawash.de" class="btn btn-primary">Projekt starten</a>
-            <a href="#pricing" class="btn btn-ghost">Preise ansehen</a>
+          <div class="contact-btns">
+            <a href="mailto:kontakt@velourawash.de" class="btn btn-primary">Termin anfragen</a>
           </div>
         </div>
       </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h2 class="brand-title">Veloura Wash</h2>
+          <p>Premium Detailing Halle</p>
+        </div>
+        <div class="footer-links">
+          <strong>Rechtliches</strong>
+          <a href="#impressum">Impressum</a>
+          <a href="#datenschutz">Datenschutz</a>
+          <a href="#agb">AGB</a>
+        </div>
+        <div class="footer-contact">
+          <strong>Kontakt</strong>
+          <p>Leipziger Str. 123<br>06108 Halle (Saale)</p>
+          <p>kontakt@velourawash.de</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Veloura Wash Halle. Alle Rechte vorbehalten.</p>
+      </div>
+    </footer>
+
+    <!-- MODERN COOKIE BANNER -->
+    <Transition name="fade">
+      <div v-if="showCookieBanner" class="cookie-banner">
+        <div class="cookie-content">
+          <h4>Wir respektieren deine Privatsphäre</h4>
+          <p>Diese Website verwendet Cookies, um dir das beste Erlebnis zu bieten. Einige sind essenziell, andere helfen uns, die Seite zu optimieren.</p>
+        </div>
+        <div class="cookie-actions">
+          <button @click="showCookieBanner = false" class="btn-ghost-small">Nur essenzielle</button>
+          <button @click="acceptCookies" class="btn btn-primary btn-small">Alle akzeptieren</button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <style>
 /* Globale Resets */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background-color: #090a0f; font-family: 'Inter', sans-serif; color: #fff; }
+/* Ein edles, weiches Schiefergrau statt hartem Schwarz */
+body { background-color: #0f172a; font-family: 'Inter', -apple-system, sans-serif; color: #f8fafc; line-height: 1.6; }
+html { scroll-behavior: smooth; }
 a { text-decoration: none; color: inherit; }
-li { list-style: none; margin-bottom: 0.5rem; }
+li { list-style: none; }
 </style>
 
 <style scoped>
-/* Basis-Variablen */
+/* Neue augenfreundliche Variablen (Mischung aus Hell/Dunkel) */
 :root {
-  --neon-cyan: #00e5ff;
-  --dark-bg: #090a0f;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --neon-accent: #0ea5e9; /* Premium Eisblau / Cyan */
+  --bg-dark: #0f172a; /* Weiches Nachtgrau/Blau für die Augen */
+  --bg-card: rgba(255, 255, 255, 0.05); /* Helleres Glas für Kontrast */
+  --bg-card-hover: rgba(255, 255, 255, 0.09);
+  --glass-border: rgba(255, 255, 255, 0.12); 
+  --text-main: #f8fafc; /* Weiches Weiß */
+  --text-muted: #cbd5e1; /* Angenehmes Hellgrau */
 }
 
-.text-cyan { color: var(--neon-cyan); }
-.text-glow { color: #fff; text-shadow: 0 0 10px var(--neon-cyan); font-style: normal; }
+.text-accent { color: var(--neon-accent); }
+.app-shell { position: relative; overflow-x: hidden; }
 
-/* HINTERGRUND & SHELL */
-.app-shell {
-  background-color: var(--dark-bg);
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-.fx-grid {
-  position: fixed;
-  inset: 0;
-  background-image: 
-    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
-  z-index: 0;
-  pointer-events: none;
-  animation: gridMove 20s linear infinite;
-}
-
-@keyframes gridMove {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(40px); }
-}
-
-.fx-glow {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(120px);
-  z-index: 0;
-  opacity: 0.4;
-  pointer-events: none;
-}
-.fx-glow-a { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--neon-cyan), transparent 70%); animation: pulseGlow 8s ease-in-out infinite alternate; }
-.fx-glow-b { bottom: 20%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, #5b21b6, transparent 70%); }
-
-@keyframes pulseGlow {
-  0% { opacity: 0.2; transform: scale(0.8); }
-  100% { opacity: 0.5; transform: scale(1.1); }
-}
-
-/* NAVIGATION */
+/* HEADER */
 .topbar {
-  position: fixed;
-  top: 0; width: 100%;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1.5rem 5%;
-  z-index: 100;
-  transition: all 0.3s ease;
+  position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
+  padding: 1.5rem 5%; z-index: 100; transition: all 0.4s ease; border-bottom: 1px solid transparent;
 }
-.topbar.compact {
-  padding: 1rem 5%;
-  background: rgba(9, 10, 15, 0.8);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--glass-border);
-}
-.brand { display: flex; align-items: center; gap: 1rem; }
-.brand-overline { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--neon-cyan); margin: 0; }
-.brand-title { font-size: 1.2rem; margin: 0; font-weight: 700; }
+.topbar.compact { padding: 1rem 5%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
+.brand-overline { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--neon-accent); font-weight: 700; margin: 0; }
+.brand-title { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; color: var(--text-main); }
 .nav { display: flex; gap: 2rem; }
-.nav a { font-size: 0.9rem; transition: color 0.3s; }
-.nav a:hover { color: var(--neon-cyan); }
+.nav a { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); transition: color 0.3s; }
+.nav a:hover { color: var(--neon-accent); }
+
+/* FULLSCREEN HERO VIDEO */
+.hero-fullscreen {
+  position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 5%;
+}
+.video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+.bg-video { width: 100%; height: 100%; object-fit: cover; }
+.video-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), var(--bg-dark)); z-index: 1; }
+.hero-content { position: relative; z-index: 2; max-width: 800px; }
+.eyebrow { color: var(--neon-accent); text-transform: uppercase; letter-spacing: 4px; font-size: 0.9rem; font-weight: 800; display: block; margin-bottom: 1rem; }
+h2 { font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 900; letter-spacing: -1px; color: #fff; }
+.hero-subtitle { font-size: 1.3rem; color: #e2e8f0; margin-bottom: 2.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.hero-actions { display: flex; gap: 1.5rem; justify-content: center; }
 
 /* LAYOUT & TYPOGRAFIE */
-main { position: relative; z-index: 10; padding: 0 5%; }
-.section { padding: 6rem 0; }
-.section-head { text-align: center; max-width: 600px; margin: 0 auto 4rem auto; }
-.section-kicker, .eyebrow { color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 0.5rem; }
-h2 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; }
-h3 { font-size: 2.2rem; margin-bottom: 1rem; }
-p { color: #a0a0a0; line-height: 1.6; }
-
-/* HERO SECTION */
-.hero { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; min-height: 100vh; padding-top: 8rem; }
-.hero-actions { display: flex; gap: 1rem; margin: 2rem 0; }
-.hero-stats { display: flex; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--glass-border); }
-.hero-stats strong { display: block; font-size: 1.5rem; color: #fff; }
-.hero-stats span { font-size: 0.8rem; color: #888; }
-
-.hero-visual { position: relative; transform-style: preserve-3d; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; border-radius: 20px; z-index: 2; padding: 2rem; }
-.car-stage { position: relative; z-index: 2; text-align: center; }
-.car-img { max-width: 100%; height: auto; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); }
-
-.hero-panel { position: absolute; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 12px; z-index: 3; }
-.top-panel { top: 10%; right: 0; transform: translateZ(30px); }
-.bottom-panel { bottom: 10%; left: 0; transform: translateZ(40px); }
-.hero-panel span { display: block; font-size: 0.7rem; color: #888; }
-.hero-panel strong { color: var(--neon-cyan); }
-
-.scan-line { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--neon-cyan); box-shadow: 0 0 15px 2px var(--neon-cyan); opacity: 0.5; animation: scan 4s linear infinite; z-index: 10; pointer-events: none; }
-@keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: 100%; opacity: 0; } }
-
-.floating-orb { position: absolute; width: 150px; height: 150px; border-radius: 50%; background: var(--neon-cyan); filter: blur(60px); z-index: 1; animation: float 6s ease-in-out infinite; }
-.orb-a { top: 10%; left: -5%; animation-delay: 0s; }
-.orb-b { bottom: 10%; right: -5%; animation-delay: -3s; }
-@keyframes float { 0%, 100% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-30px) scale(1.2); } }
+.section { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+/* Ein Bereich mit etwas hellerer Hintergrundfarbe, für den Hell/Dunkel Mix */
+.bg-light-mix { background-color: #1e293b; max-width: 100%; padding-left: 5%; padding-right: 5%; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+.section-head { text-align: center; max-width: 700px; margin: 0 auto 5rem auto; }
+.section-kicker { color: var(--neon-accent); text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; font-weight: 800; display: block; margin-bottom: 1rem; }
+h3 { font-size: 3rem; margin-bottom: 1.5rem; font-weight: 800; line-height: 1.1; letter-spacing: -1px; color: var(--text-main); }
+h4 { font-size: 1.5rem; margin-bottom: 1rem; font-weight: 700; color: var(--text-main); }
+p { color: var(--text-muted); font-size: 1.1rem; }
 
 /* BUTTONS */
-.btn { padding: 1rem 2rem; border-radius: 50px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s; display: inline-block; }
-.btn-primary { background: linear-gradient(45deg, #00b4cc, var(--neon-cyan)); color: #000; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
-.btn-primary:hover { box-shadow: 0 0 30px rgba(0, 229, 255, 0.6); transform: scale(1.05); }
-.btn-ghost { border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
-.btn-ghost:hover { background: rgba(0, 229, 255, 0.1); transform: scale(1.05); }
+.btn { padding: 1rem 2rem; border-radius: 8px; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; display: inline-block; border: none; }
+.btn-primary { background: var(--neon-accent); color: #fff; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
+.btn-primary:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.6); }
+.btn-ghost { border: 2px solid #fff; color: #fff; background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); }
+.btn-ghost:hover { background: #fff; color: var(--bg-dark); transform: translateY(-2px); }
+.btn-small { padding: 0.8rem 1.5rem; font-size: 0.9rem; }
+.btn-ghost-small { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
+.full-width { width: 100%; text-align: center; margin-top: 1.5rem; }
 
-/* GRIDS & CARDS */
-.service-grid, .pricing-grid, .review-grid, .timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-
-.glass-card, .price-card, .review-card {
-  background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 2.5rem; transition: all 0.4s; position: relative; overflow: hidden;
-}
-.glass-card:hover, .price-card:hover { transform: translateY(-10px) scale(1.02); border-color: rgba(0, 229, 255, 0.3); box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0, 229, 255, 0.1) inset; }
-
-.icon-badge { font-size: 2rem; color: var(--neon-cyan); margin-bottom: 1rem; }
-.price { font-size: 3rem; font-weight: bold; margin: 1rem 0; color: #fff; }
-.chip { display: inline-block; padding: 0.3rem 0.8rem; background: rgba(0, 229, 255, 0.1); color: var(--neon-cyan); border-radius: 20px; font-size: 0.8rem; margin-bottom: 1rem; border: 1px solid rgba(0, 229, 255, 0.2); }
-.feature-list li::before { content: "✓ "; color: var(--neon-cyan); }
-
-.price-card.featured { border-color: var(--neon-cyan); box-shadow: 0 0 30px rgba(0, 229, 255, 0.1); }
+/* GRIDS & CARDS (Clean UI mit weichem Kontrast) */
+.service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
+.clean-card { padding: 2.5rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--glass-border); transition: all 0.3s; }
+.clean-card:hover { background: var(--bg-card-hover); transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+.icon-badge { font-size: 1.5rem; color: var(--neon-accent); font-weight: 900; margin-bottom: 1rem; background: rgba(14, 165, 233, 0.1); display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; }
 
 /* SHOWCASE SECTION */
-.showcase { display: grid; grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: center; }
-.glass-frame { border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border); }
-.full-img { width: 100%; height: 100%; object-fit: cover; }
-.showcase-copy { padding: 3rem; background: var(--glass-bg); backdrop-filter: blur(10px); }
+.showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+.showcase-image { border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.img-fluid { width: 100%; height: auto; display: block; object-fit: cover; }
+.feature-list { margin-top: 2rem; }
+.feature-list li { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; font-size: 1.1rem; color: var(--text-main); }
+.feature-list li::before { content: "✓"; color: var(--neon-accent); font-weight: bold; font-size: 1.2rem; }
 
-/* CONTACT BAND */
-.contact-band { display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+/* PRICING */
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+.price-card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 16px; padding: 3rem 2rem; transition: transform 0.3s; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.price-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.3); background: var(--bg-card-hover); }
+.price-card.featured { border-color: var(--neon-accent); background: rgba(14, 165, 233, 0.05); }
+.price { font-size: 3.5rem; font-weight: 900; color: var(--text-main); margin: 1rem 0; letter-spacing: -2px; }
+.chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--neon-accent); color: #fff; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 20px; }
+.feature-list-small { margin-top: 2rem; }
+.feature-list-small li { font-size: 0.95rem; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem; color: var(--text-muted); }
+
+/* CONTACT BANNER */
+.contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2); }
+.contact-banner h3 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2.5rem; }
+.contact-banner p { color: rgba(255,255,255,0.9); margin: 0; }
+.contact-banner .btn-primary { background: #fff; color: #0f172a; box-shadow: none; }
+.contact-banner .btn-primary:hover { background: #f1f5f9; transform: translateY(-2px); }
+
+/* FOOTER */
+.footer { background: #0b1120; padding: 5rem 5% 2rem; border-top: 1px solid var(--glass-border); }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; max-width: 1400px; margin: 0 auto 4rem; }
+.footer-links, .footer-contact { display: flex; flex-direction: column; gap: 0.8rem; }
+.footer strong { color: var(--text-main); font-size: 1.1rem; margin-bottom: 0.5rem; }
+.footer a, .footer p { color: var(--text-muted); font-size: 0.95rem; transition: color 0.3s; }
+.footer a:hover { color: var(--neon-accent); }
+.footer-bottom { text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 2rem; color: #64748b; font-size: 0.85rem; }
+
+/* COOKIE BANNER */
+.cookie-banner {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+  padding: 2rem; border-radius: 16px; width: 90%; max-width: 800px; z-index: 1000;
+  display: flex; justify-content: space-between; align-items: center; gap: 2rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.cookie-content h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main); }
+.cookie-content p { font-size: 0.9rem; margin: 0; color: var(--text-muted); }
+.cookie-actions { display: flex; gap: 1rem; align-items: center; flex-shrink: 0; }
 
 /* ANIMATIONEN */
-.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translate(-50%, 20px); }
 
-@media (max-width: 900px) {
-  .hero, .showcase, .contact-band { grid-template-columns: 1fr; text-align: center; flex-direction: column; }
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .showcase { grid-template-columns: 1fr; gap: 4rem; }
+  h2 { font-size: 3.5rem; }
+  h3 { font-size: 2.5rem; }
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .cookie-banner { flex-direction: column; align-items: flex-start; }
+  .cookie-actions { width: 100%; justify-content: space-between; }
+}
+@media (max-width: 768px) {
   .nav { display: none; }
-  h2 { font-size: 2.5rem; }
-  .hero-actions { justify-content: center; }
+  h2 { font-size: 2.8rem; }
+  .hero-actions { flex-direction: column; width: 100%; }
 }
 </style>
