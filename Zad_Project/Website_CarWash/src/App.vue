@@ -5,9 +5,6 @@ const isScrolled = ref(false)
 const parallaxBox = ref(null)
 const showCookieBanner = ref(true)
 
-// LÖSUNG: Video-Pfad als Variable definieren. 
-// So fasst Vite die Datei nicht an und der Fehler verschwindet.
-const videoUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4'
 // Cookie Logik
 const acceptCookies = () => {
   showCookieBanner.value = false
@@ -63,13 +60,14 @@ onMounted(() => {
     </header>
 
     <!-- FULLSCREEN VIDEO HERO -->
+       <!-- CINEMATIC PANORAMA VIDEO HERO -->
     <section class="hero-fullscreen">
       <div class="video-background">
         <div class="video-overlay"></div>
-        <video autoplay loop muted playsinline class="bg-video">
-          <!-- LÖSUNG: Hier binden wir die Variable mit Doppelpunkt ein -->
-          <source :src="videoUrl" type="video/mp4">
-        </video>
+        
+        <!-- LÖSUNG: :src="'/hero-video.mp4'" - das verhindert den Vite Import Fehler! -->
+        <video autoplay loop muted playsinline class="bg-video" :src="'/hero-video.mp4'"></video>
+        
       </div>
 
       <div class="hero-content reveal">
@@ -284,18 +282,37 @@ li { list-style: none; }
 .nav a { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); transition: color 0.3s; }
 .nav a:hover { color: var(--neon-accent); }
 
-/* FULLSCREEN HERO VIDEO */
+/* --- FULLSCREEN HERO VIDEO IN ORIGINALGRÖßE --- */
 .hero-fullscreen {
-  position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 5%;
+  position: relative;
+  /* Wieder volle Höhe (100% des Bildschirms) */
+  height: 100vh; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 5%;
+  /* Harte Letterbox-Ränder entfernt, wieder fließendes Fullscreen */
+  overflow: hidden;
 }
-.video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
-.bg-video { width: 100%; height: 100%; object-fit: cover; }
-.video-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), var(--bg-dark)); z-index: 1; }
-.hero-content { position: relative; z-index: 2; max-width: 800px; }
-.eyebrow { color: var(--neon-accent); text-transform: uppercase; letter-spacing: 4px; font-size: 0.9rem; font-weight: 800; display: block; margin-bottom: 1rem; }
-h2 { font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 900; letter-spacing: -1px; color: #fff; }
-.hero-subtitle { font-size: 1.3rem; color: #e2e8f0; margin-bottom: 2.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-.hero-actions { display: flex; gap: 1.5rem; justify-content: center; }
+
+.video-background { 
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+}
+
+.bg-video { 
+  width: 100%; 
+  height: 100%; 
+  /* Füllt den Bildschirm aus, ohne das Video zu verzerren */
+  object-fit: cover; 
+}
+
+.video-overlay { 
+  position: absolute; inset: 0; 
+  /* Ein weiches, komplett durchgehendes Overlay, damit der Text lesbar ist */
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7)); 
+  z-index: 1; 
+}
 
 /* LAYOUT & TYPOGRAFIE */
 .section { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
