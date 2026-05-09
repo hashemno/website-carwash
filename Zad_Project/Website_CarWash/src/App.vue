@@ -5,15 +5,19 @@ const isScrolled = ref(false)
 const parallaxBox = ref(null)
 const showCookieBanner = ref(true)
 
-// --- HIER IST DIE ÄNDERUNG ---
-// Verweist nun auf dein lokales Video im public-Ordner
+// --- VIDEO SETUP ---
+// Pfad zum lokalen Video im public-Ordner
 const videoUrl = '/carwash.mp4'
+
+// Referenz für den HTML Video-Player
+const videoPlayer = ref(null)
+// ------------------
+
 // Cookie Logik
 const acceptCookies = () => {
   showCookieBanner.value = false
 }
 
-// ... [Rest deines bestehenden Codes bleibt exakt gleich] ...
 // --- TACHOMETER LOGIK START ---
 const statsSection = ref(null)
 
@@ -32,7 +36,6 @@ const animateCounters = () => {
     let frame = 0;
     const counter = setInterval(() => {
       frame++;
-      // Ease-Out Effekt (wird am Ende langsamer)
       const progress = frame / totalFrames;
       const easeOut = 1 - Math.pow(1 - progress, 3);
       
@@ -49,9 +52,23 @@ const animateCounters = () => {
 
 // Scroll-Reveals & Header-Logik
 onMounted(() => {
+  
+  // --- VIDEO AUTOPLAY FIX ---
+  // Erzwingt den Start des Videos, falls der Browser es blockiert
+  if (videoPlayer.value) {
+    videoPlayer.value.play().catch(error => {
+      console.log("Autoplay blockiert. Versuche es stummgeschaltet:", error)
+      videoPlayer.value.muted = true
+      videoPlayer.value.play()
+    })
+  }
+  // --------------------------
+
+  // Header Scroll-Effekt
   window.addEventListener('scroll', () => {
     isScrolled.value = window.scrollY > 50
     
+    // Parallax Effekt für das Bild
     if (parallaxBox.value) {
       const scrollRate = window.scrollY * 0.1
       parallaxBox.value.style.transform = `translateY(${scrollRate}px)`
@@ -112,8 +129,14 @@ onMounted(() => {
     <section class="hero-fullscreen">
       <div class="video-background">
         <div class="video-overlay"></div>
-        <video autoplay loop muted playsinline class="bg-video">
-          <source :src="videoUrl" type="video/mp4">
+        <video 
+          ref="videoPlayer"
+          :src="videoUrl"
+          autoplay 
+          loop 
+          muted 
+          playsinline 
+          class="bg-video">
         </video>
       </div>
 
