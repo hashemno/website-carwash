@@ -128,15 +128,13 @@ onMounted(() => {
     <section class="hero-fullscreen">
       <div class="video-background">
         <div class="video-overlay"></div>
-        <!-- NEU: "controls" Attribut hinzugefügt für sichtbaren Player -->
         <video 
           ref="videoPlayer"
           :src="videoUrl"
           autoplay 
           loop 
           muted 
-          playsinline 
-          controls
+          playsinline
           class="bg-video">
         </video>
       </div>
@@ -400,7 +398,7 @@ h4 { font-size: 1.5rem; margin-bottom: 1rem; font-weight: 700; color: var(--text
 p { color: var(--text-muted); font-size: 1.1rem; }
 
 /* BUTTONS */
-.btn { padding: 1rem 2rem; border-radius: 8px; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; display: inline-block; border: none; }
+.btn { padding: 1rem 2rem; border-radius: 8px; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; display: inline-block; bor[...]
 .btn-primary { background: var(--neon-accent); color: #fff; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
 .btn-primary:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.6); }
 .btn-ghost { border: 2px solid #fff; color: #fff; background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); }
@@ -413,7 +411,7 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
 .clean-card { padding: 2.5rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--glass-border); transition: all 0.3s; }
 .clean-card:hover { background: var(--bg-card-hover); transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
-.icon-badge { font-size: 1.5rem; color: var(--neon-accent); font-weight: 900; margin-bottom: 1rem; background: rgba(14, 165, 233, 0.1); display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; }
+.icon-badge { font-size: 1.5rem; color: var(--neon-accent); font-weight: 900; margin-bottom: 1rem; background: rgba(14, 165, 233, 0.1); display: inline-block; padding: 0.5rem 1rem; border-radius: 8px;[...]
 
 /* SHOWCASE SECTION */
 .showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
@@ -425,11 +423,11 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 
 /* PRICING */
 .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-.price-card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 16px; padding: 3rem 2rem; transition: transform 0.3s; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.price-card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 16px; padding: 3rem 2rem; transition: transform 0.3s; position: relative; box-shadow: 0 10px 30px rgba(0[...]
 .price-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.3); background: var(--bg-card-hover); }
 .price-card.featured { border-color: var(--neon-accent); background: rgba(14, 165, 233, 0.05); }
 .price { font-size: 3.5rem; font-weight: 900; color: var(--text-main); margin: 1rem 0; letter-spacing: -2px; }
-.chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--neon-accent); color: #fff; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 20px; }
+.chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--neon-accent); color: #fff; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform:[...]
 .feature-list-small { margin-top: 2rem; }
 .feature-list-small li { font-size: 0.95rem; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem; color: var(--text-muted); }
 
@@ -488,7 +486,7 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 }
 
 /* CONTACT BANNER */
-.contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2); }
+.contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: w[...]
 .contact-banner h3 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2.5rem; }
 .contact-banner p { color: rgba(255,255,255,0.9); margin: 0; }
 .contact-banner .btn-primary { background: #fff; color: #0f172a; box-shadow: none; }
