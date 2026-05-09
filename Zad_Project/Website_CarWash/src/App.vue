@@ -7,7 +7,7 @@ const showCookieBanner = ref(true)
 
 // --- VIDEO SETUP ---
 // Pfad zum lokalen Video im public-Ordner
-const videoUrl = '/carwash'
+const videoUrl = '/carwash.mp4'
 
 // Referenz für den HTML Video-Player
 const videoPlayer = ref(null)
@@ -128,15 +128,14 @@ onMounted(() => {
     <section class="hero-fullscreen">
       <div class="video-background">
         <div class="video-overlay"></div>
-        <!-- NEU: "controls" Attribut hinzugefügt für sichtbaren Player -->
+        <!-- Video ohne Controls im Hintergrund -->
         <video 
           ref="videoPlayer"
           :src="videoUrl"
           autoplay 
           loop 
           muted 
-          playsinline 
-          controls
+          playsinline
           class="bg-video">
         </video>
       </div>
@@ -375,7 +374,7 @@ li { list-style: none; }
 .video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
 .bg-video { width: 100%; height: 100%; object-fit: cover; }
 
-/* NEU: pointer-events: none sorgt dafür, dass das dunkle Overlay keine Klicks auf den Video-Player blockiert */
+/* Dunkles Overlay ohne pointer-events für sauberes Video-Rendering */
 .video-overlay { 
   position: absolute; 
   inset: 0; 
@@ -488,7 +487,7 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 }
 
 /* CONTACT BANNER */
-.contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2); }
+.contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
 .contact-banner h3 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2.5rem; }
 .contact-banner p { color: rgba(255,255,255,0.9); margin: 0; }
 .contact-banner .btn-primary { background: #fff; color: #0f172a; box-shadow: none; }
