@@ -7,8 +7,7 @@ const showCookieBanner = ref(true)
 
 // --- HIER IST DIE ÄNDERUNG ---
 // Verweist nun auf dein lokales Video im public-Ordner
-const videoUrl = '/6872468-uhd_3840_2160_25fps.mp4'
-
+const videoUrl = 'https://assets.mixkit.co/videos/download/mixkit-car-washing-in-a-dark-garage-43224-medium.mp4'
 // Cookie Logik
 const acceptCookies = () => {
   showCookieBanner.value = false
