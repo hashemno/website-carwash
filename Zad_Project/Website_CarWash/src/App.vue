@@ -5,14 +5,16 @@ const isScrolled = ref(false)
 const parallaxBox = ref(null)
 const showCookieBanner = ref(true)
 
-// Video-Pfad als Variable
-const videoUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4'
+// --- HIER IST DIE ÄNDERUNG ---
+// Verweist nun auf dein lokales Video im public-Ordner
+const videoUrl = '/6872468-uhd_3840_2160_25fps.mp4'
 
 // Cookie Logik
 const acceptCookies = () => {
   showCookieBanner.value = false
 }
 
+// ... [Rest deines bestehenden Codes bleibt exakt gleich] ...
 // --- TACHOMETER LOGIK START ---
 const statsSection = ref(null)
 
