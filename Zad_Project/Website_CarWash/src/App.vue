@@ -5,10 +5,46 @@ const isScrolled = ref(false)
 const parallaxBox = ref(null)
 const showCookieBanner = ref(true)
 
+// Video-Pfad als Variable
+const videoUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4'
+
 // Cookie Logik
 const acceptCookies = () => {
   showCookieBanner.value = false
 }
+
+// --- TACHOMETER LOGIK START ---
+const statsSection = ref(null)
+
+const stats = ref([
+  { label: 'Gepflegte Fahrzeuge', target: 3500, current: 0, suffix: '+' },
+  { label: 'Jahre Erfahrung', target: 12, current: 0, suffix: '' },
+  { label: 'Stammkunden', target: 99, current: 0, suffix: '%' }
+])
+
+const animateCounters = () => {
+  const duration = 2000; // 2 Sekunden Dauer
+  const frameDuration = 1000 / 60; // 60 FPS
+  const totalFrames = Math.round(duration / frameDuration);
+
+  stats.value.forEach(stat => {
+    let frame = 0;
+    const counter = setInterval(() => {
+      frame++;
+      // Ease-Out Effekt (wird am Ende langsamer)
+      const progress = frame / totalFrames;
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      
+      stat.current = Math.round(stat.target * easeOut);
+
+      if (frame === totalFrames) {
+        clearInterval(counter);
+        stat.current = stat.target;
+      }
+    }, frameDuration);
+  });
+}
+// --- TACHOMETER LOGIK ENDE ---
 
 // Scroll-Reveals & Header-Logik
 onMounted(() => {
@@ -35,6 +71,18 @@ onMounted(() => {
     el.style.transitionDelay = `${(index % 4) * 0.1}s`
     observer.observe(el)
   })
+
+  // Observer für die Tachometer (Startet nur 1x wenn sichtbar)
+  const statsObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      animateCounters()
+      statsObserver.disconnect() // Nach dem ersten Mal stoppen
+    }
+  }, { threshold: 0.5 })
+
+  if (statsSection.value) {
+    statsObserver.observe(statsSection.value)
+  }
 })
 </script>
 
@@ -45,7 +93,7 @@ onMounted(() => {
       <div class="brand">
         <div>
           <p class="brand-overline">Halle (Saale)</p>
-          <h1 class="brand-title">Veloura Wash</h1>
+          <h1 class="brand-title">Zad Carwash</h1>
         </div>
       </div>
 
@@ -60,14 +108,12 @@ onMounted(() => {
     </header>
 
     <!-- FULLSCREEN VIDEO HERO -->
-       <!-- CINEMATIC PANORAMA VIDEO HERO -->
     <section class="hero-fullscreen">
       <div class="video-background">
         <div class="video-overlay"></div>
-        
-        <!-- LÖSUNG: :src="'/hero-video.mp4'" - das verhindert den Vite Import Fehler! -->
-        <video autoplay loop muted playsinline class="bg-video" :src="'/hero-video.mp4'"></video>
-        
+        <video autoplay loop muted playsinline class="bg-video">
+          <source :src="videoUrl" type="video/mp4">
+        </video>
       </div>
 
       <div class="hero-content reveal">
@@ -191,6 +237,21 @@ onMounted(() => {
         </div>
       </section>
 
+      <!-- Stats / Tachometer -->
+      <section id="stats" class="section" ref="statsSection">
+        <div class="stats-grid">
+          <div class="stat-card reveal" v-for="(stat, index) in stats" :key="index">
+            <div class="stat-circle">
+              <div class="stat-inner">
+                <span class="stat-value">{{ stat.current }}</span>
+                <span class="stat-suffix">{{ stat.suffix }}</span>
+              </div>
+            </div>
+            <p class="stat-label">{{ stat.label }}</p>
+          </div>
+        </div>
+      </section>
+
       <!-- Contact -->
       <section id="contact" class="section">
         <div class="contact-banner reveal">
@@ -199,7 +260,7 @@ onMounted(() => {
             <p>Sichere dir jetzt deinen Termin in unserem Studio in Halle.</p>
           </div>
           <div class="contact-btns">
-            <a href="mailto:kontakt@velourawash.de" class="btn btn-primary">Termin anfragen</a>
+            <a href="mailto:kontakt@zadcarwash.de" class="btn btn-primary">Termin anfragen</a>
           </div>
         </div>
       </section>
@@ -209,7 +270,7 @@ onMounted(() => {
     <footer class="footer">
       <div class="footer-grid">
         <div class="footer-brand">
-          <h2 class="brand-title">Veloura Wash</h2>
+          <h2 class="brand-title">Zad Carwash</h2>
           <p>Premium Detailing Halle</p>
         </div>
         <div class="footer-links">
@@ -221,11 +282,11 @@ onMounted(() => {
         <div class="footer-contact">
           <strong>Kontakt</strong>
           <p>Leipziger Str. 123<br>06108 Halle (Saale)</p>
-          <p>kontakt@velourawash.de</p>
+          <p>kontakt@zadcarwash.de</p>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Veloura Wash Halle. Alle Rechte vorbehalten.</p>
+        <p>&copy; 2026 Zad Carwash Halle. Alle Rechte vorbehalten.</p>
       </div>
     </footer>
 
@@ -248,7 +309,6 @@ onMounted(() => {
 <style>
 /* Globale Resets */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-/* Ein edles, weiches Schiefergrau statt hartem Schwarz */
 body { background-color: #0f172a; font-family: 'Inter', -apple-system, sans-serif; color: #f8fafc; line-height: 1.6; }
 html { scroll-behavior: smooth; }
 a { text-decoration: none; color: inherit; }
@@ -256,15 +316,14 @@ li { list-style: none; }
 </style>
 
 <style scoped>
-/* Neue augenfreundliche Variablen (Mischung aus Hell/Dunkel) */
 :root {
-  --neon-accent: #0ea5e9; /* Premium Eisblau / Cyan */
-  --bg-dark: #0f172a; /* Weiches Nachtgrau/Blau für die Augen */
-  --bg-card: rgba(255, 255, 255, 0.05); /* Helleres Glas für Kontrast */
+  --neon-accent: #0ea5e9;
+  --bg-dark: #0f172a; 
+  --bg-card: rgba(255, 255, 255, 0.05);
   --bg-card-hover: rgba(255, 255, 255, 0.09);
   --glass-border: rgba(255, 255, 255, 0.12); 
-  --text-main: #f8fafc; /* Weiches Weiß */
-  --text-muted: #cbd5e1; /* Angenehmes Hellgrau */
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
 }
 
 .text-accent { color: var(--neon-accent); }
@@ -282,41 +341,21 @@ li { list-style: none; }
 .nav a { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); transition: color 0.3s; }
 .nav a:hover { color: var(--neon-accent); }
 
-/* --- FULLSCREEN HERO VIDEO IN ORIGINALGRÖßE --- */
+/* FULLSCREEN HERO VIDEO */
 .hero-fullscreen {
-  position: relative;
-  /* Wieder volle Höhe (100% des Bildschirms) */
-  height: 100vh; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0 5%;
-  /* Harte Letterbox-Ränder entfernt, wieder fließendes Fullscreen */
-  overflow: hidden;
+  position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 5%;
 }
-
-.video-background { 
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
-}
-
-.bg-video { 
-  width: 100%; 
-  height: 100%; 
-  /* Füllt den Bildschirm aus, ohne das Video zu verzerren */
-  object-fit: cover; 
-}
-
-.video-overlay { 
-  position: absolute; inset: 0; 
-  /* Ein weiches, komplett durchgehendes Overlay, damit der Text lesbar ist */
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7)); 
-  z-index: 1; 
-}
+.video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+.bg-video { width: 100%; height: 100%; object-fit: cover; }
+.video-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), var(--bg-dark)); z-index: 1; }
+.hero-content { position: relative; z-index: 2; max-width: 800px; }
+.eyebrow { color: var(--neon-accent); text-transform: uppercase; letter-spacing: 4px; font-size: 0.9rem; font-weight: 800; display: block; margin-bottom: 1rem; }
+h2 { font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 900; letter-spacing: -1px; color: #fff; }
+.hero-subtitle { font-size: 1.3rem; color: #e2e8f0; margin-bottom: 2.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.hero-actions { display: flex; gap: 1.5rem; justify-content: center; }
 
 /* LAYOUT & TYPOGRAFIE */
 .section { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
-/* Ein Bereich mit etwas hellerer Hintergrundfarbe, für den Hell/Dunkel Mix */
 .bg-light-mix { background-color: #1e293b; max-width: 100%; padding-left: 5%; padding-right: 5%; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
 .section-head { text-align: center; max-width: 700px; margin: 0 auto 5rem auto; }
 .section-kicker { color: var(--neon-accent); text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; font-weight: 800; display: block; margin-bottom: 1rem; }
@@ -334,7 +373,7 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 .btn-ghost-small { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
 .full-width { width: 100%; text-align: center; margin-top: 1.5rem; }
 
-/* GRIDS & CARDS (Clean UI mit weichem Kontrast) */
+/* GRIDS & CARDS */
 .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
 .clean-card { padding: 2.5rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--glass-border); transition: all 0.3s; }
 .clean-card:hover { background: var(--bg-card-hover); transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
@@ -357,6 +396,60 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 .chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--neon-accent); color: #fff; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 20px; }
 .feature-list-small { margin-top: 2rem; }
 .feature-list-small li { font-size: 0.95rem; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem; color: var(--text-muted); }
+
+/* TACHOMETER / STATS */
+.stats-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+  gap: 3rem; 
+  text-align: center; 
+  max-width: 1000px; 
+  margin: 0 auto; 
+}
+.stat-card { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+}
+.stat-circle {
+  width: 160px; 
+  height: 160px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.05);
+  border-top-color: var(--neon-accent);
+  border-right-color: var(--neon-accent);
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background: var(--bg-card);
+  box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.05), 0 10px 30px rgba(0,0,0,0.3);
+  transform: rotate(-45deg);
+}
+.stat-inner {
+  transform: rotate(45deg);
+  display: flex;
+  align-items: baseline;
+}
+.stat-value { 
+  font-size: 3rem; 
+  font-weight: 900; 
+  color: var(--text-main); 
+  letter-spacing: -2px; 
+}
+.stat-suffix { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  color: var(--neon-accent); 
+  margin-left: 2px; 
+}
+.stat-label { 
+  font-size: 1rem; 
+  color: var(--text-muted); 
+  text-transform: uppercase; 
+  letter-spacing: 2px; 
+  font-weight: 600; 
+}
 
 /* CONTACT BANNER */
 .contact-banner { background: linear-gradient(135deg, #0284c7, var(--neon-accent)); padding: 4rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2); }
