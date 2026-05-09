@@ -105,8 +105,19 @@ onMounted(() => {
 
 <template>
   <div class="app-shell">
-    <!-- Header -->
+    <!-- Header mit Video-Hintergrund -->
     <header class="topbar" :class="{ compact: isScrolled }">
+      <!-- Video im Header-Hintergrund -->
+      <video 
+        ref="videoPlayer"
+        :src="videoUrl"
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        class="header-video">
+      </video>
+      
       <div class="brand">
         <div>
           <p class="brand-overline">Halle (Saale)</p>
@@ -124,22 +135,8 @@ onMounted(() => {
       <a href="#contact" class="btn btn-primary nav-cta">Termin buchen</a>
     </header>
 
-    <!-- FULLSCREEN VIDEO HERO -->
+    <!-- FULLSCREEN HERO SECTION (ohne Video) -->
     <section class="hero-fullscreen">
-      <div class="video-background">
-        <div class="video-overlay"></div>
-        <!-- Video ohne Controls im Hintergrund -->
-        <video 
-          ref="videoPlayer"
-          :src="videoUrl"
-          autoplay 
-          loop 
-          muted 
-          playsinline
-          class="bg-video">
-        </video>
-      </div>
-
       <!-- Pointer-events: none sorgt dafür, dass man durch den Text hindurch das Video klicken kann, falls nötig -->
       <div class="hero-content reveal" style="pointer-events: none;">
         <span class="eyebrow">Premium Car Detailing</span>
@@ -359,28 +356,32 @@ li { list-style: none; }
 .topbar {
   position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
   padding: 1.5rem 5%; z-index: 100; transition: all 0.4s ease; border-bottom: 1px solid transparent;
+  background: rgba(15, 23, 42, 0.7);
 }
 .topbar.compact { padding: 1rem 5%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
+
+/* Header Video Background */
+.header-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.3;
+  z-index: -1;
+}
+
 .brand-overline { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--neon-accent); font-weight: 700; margin: 0; }
 .brand-title { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; color: var(--text-main); }
 .nav { display: flex; gap: 2rem; }
 .nav a { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); transition: color 0.3s; }
 .nav a:hover { color: var(--neon-accent); }
 
-/* FULLSCREEN HERO VIDEO */
+/* FULLSCREEN HERO - Ohne Video */
 .hero-fullscreen {
   position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 5%;
-}
-.video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
-.bg-video { width: 100%; height: 100%; object-fit: cover; }
-
-/* Dunkles Overlay ohne pointer-events für sauberes Video-Rendering */
-.video-overlay { 
-  position: absolute; 
-  inset: 0; 
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), var(--bg-dark)); 
-  z-index: 1; 
-  pointer-events: none; 
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
 }
 
 .hero-content { position: relative; z-index: 2; max-width: 800px; }
@@ -407,6 +408,7 @@ p { color: var(--text-muted); font-size: 1.1rem; }
 .btn-small { padding: 0.8rem 1.5rem; font-size: 0.9rem; }
 .btn-ghost-small { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
 .full-width { width: 100%; text-align: center; margin-top: 1.5rem; }
+.nav-cta { position: relative; z-index: 10; }
 
 /* GRIDS & CARDS */
 .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
